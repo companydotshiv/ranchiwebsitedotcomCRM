@@ -110,6 +110,7 @@ export const TaskDetailModal = ({ task, clientId, clientData: initialClientData,
   const { data: onLeaveUsers } = useOnLeaveUsers();
   const [selectLevelIndex, setSelectLevelIndex] = useState<number | null>(null);
   const [selectedUsersForLevel, setSelectedUsersForLevel] = useState<string[]>([]);
+  const [isCommentsExpandedMobile, setIsCommentsExpandedMobile] = useState(false);
 
   const horizontalScrollRef = React.useRef<HTMLDivElement>(null);
   const [isFlowCollapsed, setIsFlowCollapsed] = useState(false);
@@ -1086,85 +1087,101 @@ export const TaskDetailModal = ({ task, clientId, clientData: initialClientData,
             </div>
           </ScrollArea>
           
-          {/* Right: Comments / Activity */}
-          <div className="flex-1 md:flex-[2] flex flex-col min-h-[280px] md:min-h-0 border-t md:border-t-0 md:border-l border-slate-200/60 pt-4 md:pt-0 pl-0 md:pl-5">
-            <h4 className="text-sm font-bold text-slate-900 mb-3 border-b border-slate-100 pb-2 flex items-center gap-2">
-              <MessageSquare className="size-4 text-slate-400" /> Comments
-            </h4>
+          {/* Right/Bottom: Comments / Activity */}
+          <div className="flex-1 md:flex-[2] flex flex-col border-t md:border-t-0 md:border-l border-slate-200/60 pt-3 md:pt-0 pl-0 md:pl-5 shrink-0 md:shrink">
+            <button 
+              onClick={() => setIsCommentsExpandedMobile(!isCommentsExpandedMobile)}
+              className="flex items-center justify-between w-full text-left md:pointer-events-none mb-2 pb-2 border-b border-slate-100 bg-slate-50/50 md:bg-transparent p-2 md:p-0 rounded-xl md:rounded-none transition-colors cursor-pointer md:cursor-default"
+            >
+              <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <MessageSquare className="size-4 text-slate-400" /> Comments
+                {activityLogs.length > 0 && (
+                  <span className="bg-slate-100 text-slate-600 text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-slate-200">
+                    {activityLogs.length}
+                  </span>
+                )}
+              </h4>
+              <div className="md:hidden text-slate-600 flex items-center gap-1 text-xs font-bold bg-slate-200/70 px-2.5 py-1 rounded-lg">
+                <span>{isCommentsExpandedMobile ? 'Hide Comments' : 'Show Comments'}</span>
+                {isCommentsExpandedMobile ? <ChevronUp className="size-3.5" /> : <ChevronDown className="size-3.5" />}
+              </div>
+            </button>
             
-            <ScrollArea className="flex-1 mb-3" innerClassName="pr-2 space-y-2">
-              {isLoadingActivity ? (
-                <div className="flex items-center justify-center h-32 text-slate-400 text-sm font-medium"><Loader2 className="size-5 animate-spin mr-2" /> Loading...</div>
-              ) : activityLogs.length === 0 ? (
-                <div className="flex items-center justify-center h-32 border border-dashed border-slate-200 rounded-xl text-slate-400 text-sm font-medium bg-slate-50/50">
-                  No comments yet.
-                </div>
-              ) : (
-                (() => {
-                  const systemComments = activityLogs.filter((item: any) => item.type === 'comment' && /^(changed|added|deleted|marked|reassigned|updated|sent to)/i.test(item.content));
-                  const latestSystemCommentId = systemComments.length > 0 ? systemComments[0].id : null;
-                  
-                  return activityLogs.map((item: any) => {
-                    if (item.type === 'comment') {
-                      const isSystem = /^(changed|added|deleted|marked|reassigned|updated|sent to)/i.test(item.content);
-                      if (isSystem) {
-                        return <SystemCommentCard key={`comment-${item.id}`} item={item} isLatest={item.id === latestSystemCommentId} />;
-                      }
+            <div className={`${isCommentsExpandedMobile ? 'flex' : 'hidden md:flex'} flex-col flex-1 min-h-[260px] md:min-h-0`}>
+              <ScrollArea className="flex-1 mb-3 max-h-[350px] md:max-h-none" innerClassName="pr-2 space-y-2">
+                {isLoadingActivity ? (
+                  <div className="flex items-center justify-center h-32 text-slate-400 text-sm font-medium"><Loader2 className="size-5 animate-spin mr-2" /> Loading...</div>
+                ) : activityLogs.length === 0 ? (
+                  <div className="flex items-center justify-center h-32 border border-dashed border-slate-200 rounded-xl text-slate-400 text-sm font-medium bg-slate-50/50">
+                    No comments yet.
+                  </div>
+                ) : (
+                  (() => {
+                    const systemComments = activityLogs.filter((item: any) => item.type === 'comment' && /^(changed|added|deleted|marked|reassigned|updated|sent to)/i.test(item.content));
+                    const latestSystemCommentId = systemComments.length > 0 ? systemComments[0].id : null;
+                    
+                    return activityLogs.map((item: any) => {
+                      if (item.type === 'comment') {
+                        const isSystem = /^(changed|added|deleted|marked|reassigned|updated|sent to)/i.test(item.content);
+                        if (isSystem) {
+                          return <SystemCommentCard key={`comment-${item.id}`} item={item} isLatest={item.id === latestSystemCommentId} />;
+                        }
 
-                      const isClient = item.author_id?.role === 'client';
-                      return (
-                        <div key={`comment-${item.id}`} className={`${isClient ? 'bg-red-50/50 border-red-100' : 'bg-slate-50/50 border-slate-100'} p-3.5 rounded-xl border`}>
-                          <div className="flex justify-between items-start mb-1.5">
-                            <span className={`text-xs font-bold ${isClient ? 'text-red-700' : 'text-slate-700'}`}>{item.author_id?.full_name || 'Unknown'} {isClient && <span className="font-normal text-red-500 ml-1">(Client)</span>}</span>
-                            <span className={`text-[10px] ${isClient ? 'text-red-400' : 'text-slate-400'} whitespace-nowrap ml-2`}>{new Date(item.created_at).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                        const isClient = item.author_id?.role === 'client';
+                        return (
+                          <div key={`comment-${item.id}`} className={`${isClient ? 'bg-red-50/50 border-red-100' : 'bg-slate-50/50 border-slate-100'} p-3.5 rounded-xl border`}>
+                            <div className="flex justify-between items-start mb-1.5">
+                              <span className={`text-xs font-bold ${isClient ? 'text-red-700' : 'text-slate-700'}`}>{item.author_id?.full_name || 'Unknown'} {isClient && <span className="font-normal text-red-500 ml-1">(Client)</span>}</span>
+                              <span className={`text-[10px] ${isClient ? 'text-red-400' : 'text-slate-400'} whitespace-nowrap ml-2`}>{new Date(item.created_at).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                            </div>
+                            <p className={`text-sm leading-relaxed whitespace-pre-wrap break-words overflow-hidden ${isClient ? 'text-red-600' : 'text-slate-600'}`}>{item.content}</p>
                           </div>
-                          <p className={`text-sm leading-relaxed whitespace-pre-wrap break-words overflow-hidden ${isClient ? 'text-red-600' : 'text-slate-600'}`}>{item.content}</p>
-                        </div>
-                      );
-                    } else {
-                      const renderVal = (v: string | null) => {
-                        if (!v) return 'nothing';
-                        if (item.field_name === 'assigned_to') {
-                          const profile = profiles.find((p: any) => p.id === v);
-                          return profile ? profile.full_name : v;
-                        }
-                        if (item.field_name === 'start_date' || item.field_name === 'due_date') {
-                          return v.split(' ')[0].split('T')[0];
-                        }
-                        return v.length > 80 ? v.substring(0, 80) + '...' : v;
-                      };
-                      return (
-                        <div key={`audit-${item.id}`} className="py-2.5 px-3 bg-white border border-slate-100 rounded-xl flex items-start gap-2.5 shadow-sm">
-                          <div className="size-2 bg-slate-900 rounded-full flex-shrink-0 mt-1.5" />
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs text-slate-600 leading-relaxed break-words">
-                              <span className="font-bold text-slate-800">{item.changed_by?.full_name || 'System'}</span> changed <span className="font-bold text-slate-800 capitalize">{item.field_name === 'assigned_to' ? 'supervisor' : item.field_name.replace('_', ' ')}</span> from <span className="line-through text-slate-400 break-all">{renderVal(item.old_value)}</span> to <span className="text-slate-800 font-medium bg-slate-100 px-1 rounded break-all">{renderVal(item.new_value)}</span>
-                            </p>
-                            <span className="text-[10px] text-slate-400 block mt-1">{new Date(item.created_at).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                        );
+                      } else {
+                        const renderVal = (v: string | null) => {
+                          if (!v) return 'nothing';
+                          if (item.field_name === 'assigned_to') {
+                            const profile = profiles.find((p: any) => p.id === v);
+                            return profile ? profile.full_name : v;
+                          }
+                          if (item.field_name === 'start_date' || item.field_name === 'due_date') {
+                            return v.split(' ')[0].split('T')[0];
+                          }
+                          return v.length > 80 ? v.substring(0, 80) + '...' : v;
+                        };
+                        return (
+                          <div key={`audit-${item.id}`} className="py-2.5 px-3 bg-white border border-slate-100 rounded-xl flex items-start gap-2.5 shadow-sm">
+                            <div className="size-2 bg-slate-900 rounded-full flex-shrink-0 mt-1.5" />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs text-slate-600 leading-relaxed break-words">
+                                <span className="font-bold text-slate-800">{item.changed_by?.full_name || 'System'}</span> changed <span className="font-bold text-slate-800 capitalize">{item.field_name === 'assigned_to' ? 'supervisor' : item.field_name.replace('_', ' ')}</span> from <span className="line-through text-slate-400 break-all">{renderVal(item.old_value)}</span> to <span className="text-slate-800 font-medium bg-slate-100 px-1 rounded break-all">{renderVal(item.new_value)}</span>
+                              </p>
+                              <span className="text-[10px] text-slate-400 block mt-1">{new Date(item.created_at).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                            </div>
                           </div>
-                        </div>
-                      );
-                    }
-                  });
-                })()
-              )}
-            </ScrollArea>
-            
-            <div className="flex items-center gap-2 pt-2">
-              <input 
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                onKeyDown={(e) => { if(e.key === 'Enter' && newComment) addCommentMutation.mutate(); }}
-                className="flex-1 bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm shadow-sm focus:outline-none focus:border-slate-500" 
-                placeholder="Add a comment..." 
-              />
-              <button 
-                onClick={() => addCommentMutation.mutate()}
-                disabled={!newComment || addCommentMutation.isPending}
-                className="bg-slate-900 text-white px-3 py-2.5 rounded-xl text-sm font-bold hover:bg-slate-900 disabled:opacity-50 transition-colors shadow-sm"
-              >
-                {addCommentMutation.isPending ? '...' : 'Post'}
-              </button>
+                        );
+                      }
+                    });
+                  })()
+                )}
+              </ScrollArea>
+              
+              <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
+                <input 
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  onKeyDown={(e) => { if(e.key === 'Enter' && newComment) addCommentMutation.mutate(); }}
+                  className="flex-1 bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm shadow-sm focus:outline-none focus:border-slate-500" 
+                  placeholder="Add a comment..." 
+                />
+                <button 
+                  onClick={() => addCommentMutation.mutate()}
+                  disabled={!newComment || addCommentMutation.isPending}
+                  className="bg-slate-900 text-white px-3 py-2.5 rounded-xl text-sm font-bold hover:bg-slate-900 disabled:opacity-50 transition-colors shadow-sm"
+                >
+                  {addCommentMutation.isPending ? '...' : 'Post'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
