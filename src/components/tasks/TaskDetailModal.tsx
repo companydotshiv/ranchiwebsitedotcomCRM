@@ -43,13 +43,9 @@ const ScrollArea = ({ children, className, innerClassName }: { children: React.R
       </div>
       
       {showIndicator && (
-        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white via-white/90 to-transparent pointer-events-none flex flex-col items-center justify-end pb-1 z-10 transition-opacity duration-300">
-          <div className="flex items-center w-[120px] gap-2 opacity-60">
-            <div className="flex-1 h-[2px] bg-slate-900 rounded-full"></div>
-            <ChevronsDown className="size-5 text-slate-900 animate-bounce" />
-            <div className="flex-1 h-[2px] bg-slate-900 rounded-full"></div>
-          </div>
-          <span className="text-[10px] font-bold mt-0.5 text-slate-900 opacity-60 uppercase tracking-wider">Scroll Down</span>
+        <div className="absolute bottom-0 left-0 right-0 h-7 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none flex items-center justify-center gap-1.5 z-10 transition-opacity duration-300 pb-0.5">
+          <ChevronsDown className="size-3.5 text-slate-500 animate-bounce" />
+          <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Scroll Down</span>
         </div>
       )}
     </div>
@@ -542,7 +538,7 @@ export const TaskDetailModal = ({ task, clientId, clientData: initialClientData,
   });
 
   return (
-    <div className="fixed inset-0 z-[100] bg-slate-900/50 flex items-center justify-center p-3 backdrop-blur-sm" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-[100] bg-slate-900/50 flex items-center justify-center p-2 sm:p-4 backdrop-blur-sm" onClick={(e) => e.stopPropagation()}>
       
       {/* Mini Modal for User Selection */}
       {selectLevelIndex !== null && (
@@ -587,7 +583,7 @@ export const TaskDetailModal = ({ task, clientId, clientData: initialClientData,
         </div>
       )}
 
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-7xl flex flex-col max-h-[90vh] p-3" onClick={e => e.stopPropagation()}>
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-7xl flex flex-col max-h-[94vh] sm:max-h-[90vh] p-3 sm:p-5 overflow-hidden" onClick={e => e.stopPropagation()}>
         
         {/* Header Row */}
         <div className="mb-3 pb-4 border-b border-slate-100">
@@ -644,8 +640,8 @@ export const TaskDetailModal = ({ task, clientId, clientData: initialClientData,
           </div>
 
           {/* Sleek Properties Row */}
-          <div className="flex flex-wrap w-full gap-2 mb-1">
-            <label className="flex-1 min-w-[120px] flex items-center gap-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 rounded-lg px-2.5 py-1.5 shadow-sm hover:shadow  transition-all duration-200 focus-within:border-slate-300 focus-within:ring-2 focus-within:ring-slate-100/50 cursor-pointer group">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-wrap w-full gap-2 mb-1">
+            <label className="flex-1 min-w-0 md:min-w-[120px] flex items-center gap-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 rounded-lg px-2.5 py-1.5 shadow-sm hover:shadow  transition-all duration-200 focus-within:border-slate-300 focus-within:ring-2 focus-within:ring-slate-100/50 cursor-pointer group">
               <span className="text-[10px] font-bold text-slate-400 group-hover:text-slate-500 uppercase tracking-wider transition-colors">Status</span>
               <select 
                 className="bg-transparent w-full text-xs font-bold text-slate-700 focus:outline-none cursor-pointer" 
@@ -660,7 +656,7 @@ export const TaskDetailModal = ({ task, clientId, clientData: initialClientData,
               </select>
             </label>
             
-            <label className="flex-1 min-w-[120px] flex items-center gap-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 rounded-lg px-2.5 py-1.5 shadow-sm hover:shadow  transition-all duration-200 focus-within:border-slate-300 focus-within:ring-2 focus-within:ring-slate-100/50 cursor-pointer group">
+            <label className="flex-1 min-w-0 md:min-w-[120px] flex items-center gap-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 rounded-lg px-2.5 py-1.5 shadow-sm hover:shadow  transition-all duration-200 focus-within:border-slate-300 focus-within:ring-2 focus-within:ring-slate-100/50 cursor-pointer group">
               <span className="text-[10px] font-bold text-slate-400 group-hover:text-slate-500 uppercase tracking-wider transition-colors">Priority</span>
               <select 
                 className="bg-transparent w-full text-xs font-bold text-slate-700 focus:outline-none cursor-pointer" 
@@ -675,9 +671,9 @@ export const TaskDetailModal = ({ task, clientId, clientData: initialClientData,
               </select>
             </label>
             
-            <label className="flex-1 min-w-[140px] flex items-center gap-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 rounded-lg px-2.5 py-1.5 shadow-sm hover:shadow  transition-all duration-200 focus-within:border-slate-300 focus-within:ring-2 focus-within:ring-slate-100/50 cursor-pointer group">
+            <label className="col-span-2 sm:col-span-1 flex-1 min-w-0 md:min-w-[140px] flex items-center gap-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 rounded-lg px-2.5 py-1.5 shadow-sm hover:shadow  transition-all duration-200 focus-within:border-slate-300 focus-within:ring-2 focus-within:ring-slate-100/50 cursor-pointer group">
               <UserIcon className="size-3 text-slate-400 group-hover:text-slate-500 shrink-0 transition-colors" />
-              <span className="text-[10px] font-bold text-slate-400 group-hover:text-slate-500 uppercase tracking-wider hidden xl:inline transition-colors">Supervisor</span>
+              <span className="text-[10px] font-bold text-slate-400 group-hover:text-slate-500 uppercase tracking-wider transition-colors">Supervisor</span>
               <select 
                 className="bg-transparent w-full text-xs font-bold text-slate-700 focus:outline-none cursor-pointer truncate" 
                 value={typeof task.assigned_to === 'object' && task.assigned_to !== null ? (task.assigned_to as any).id : (task.assigned_to || '')}
@@ -691,7 +687,7 @@ export const TaskDetailModal = ({ task, clientId, clientData: initialClientData,
               </select>
             </label>
 
-            <label className="flex-1 min-w-[120px] flex items-center gap-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 rounded-lg px-2.5 py-1.5 shadow-sm hover:shadow  transition-all duration-200 focus-within:border-slate-300 focus-within:ring-2 focus-within:ring-slate-100/50 cursor-pointer group">
+            <label className="flex-1 min-w-0 md:min-w-[120px] flex items-center gap-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 rounded-lg px-2.5 py-1.5 shadow-sm hover:shadow  transition-all duration-200 focus-within:border-slate-300 focus-within:ring-2 focus-within:ring-slate-100/50 cursor-pointer group">
               <span className="text-[10px] font-bold text-slate-400 group-hover:text-slate-500 uppercase tracking-wider transition-colors">Start</span>
               <input 
                 type="date"
@@ -711,7 +707,7 @@ export const TaskDetailModal = ({ task, clientId, clientData: initialClientData,
               />
             </label>
             
-            <label className="flex-1 min-w-[120px] flex items-center gap-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 rounded-lg px-2.5 py-1.5 shadow-sm hover:shadow  transition-all duration-200 focus-within:border-slate-300 focus-within:ring-2 focus-within:ring-slate-100/50 cursor-pointer group">
+            <label className="flex-1 min-w-0 md:min-w-[120px] flex items-center gap-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 rounded-lg px-2.5 py-1.5 shadow-sm hover:shadow  transition-all duration-200 focus-within:border-slate-300 focus-within:ring-2 focus-within:ring-slate-100/50 cursor-pointer group">
               <span className="text-[10px] font-bold text-slate-400 group-hover:text-slate-500 uppercase tracking-wider transition-colors">Due</span>
               <input 
                 type="date"
@@ -892,10 +888,10 @@ export const TaskDetailModal = ({ task, clientId, clientData: initialClientData,
       </div>
     )}
 
-        {/* 2-Column Content Area */}
-        <div className="flex gap-2 flex-1 overflow-hidden">
+        {/* Responsive Content Area: Stacked on Mobile, 2-Column on Desktop */}
+        <div className="flex flex-col md:flex-row gap-4 flex-1 overflow-y-auto md:overflow-hidden min-h-0">
           {/* Left: Mini Tasks */}
-          <ScrollArea className="flex-[3]" innerClassName="pr-2">
+          <ScrollArea className="flex-1 md:flex-[3] min-h-[220px] md:min-h-0" innerClassName="pr-1 sm:pr-2">
             {/* Mini Tasks Section */}
             <div className="mt-3">
               <h4 className="text-sm font-bold text-slate-900 mb-3 border-b border-slate-100 pb-2 flex items-center gap-2">
@@ -1091,7 +1087,7 @@ export const TaskDetailModal = ({ task, clientId, clientData: initialClientData,
           </ScrollArea>
           
           {/* Right: Comments / Activity */}
-          <div className="flex-[2] flex flex-col overflow-hidden border-l border-slate-100 pl-8">
+          <div className="flex-1 md:flex-[2] flex flex-col min-h-[280px] md:min-h-0 border-t md:border-t-0 md:border-l border-slate-200/60 pt-4 md:pt-0 pl-0 md:pl-5">
             <h4 className="text-sm font-bold text-slate-900 mb-3 border-b border-slate-100 pb-2 flex items-center gap-2">
               <MessageSquare className="size-4 text-slate-400" /> Comments
             </h4>
