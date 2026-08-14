@@ -43,7 +43,7 @@ const ScrollArea = ({ children, className, innerClassName }: { children: React.R
       </div>
       
       {showIndicator && (
-        <div className="absolute bottom-0 left-0 right-0 h-7 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none flex items-center justify-center gap-1.5 z-10 transition-opacity duration-300 pb-0.5">
+        <div className="hidden md:flex absolute bottom-0 left-0 right-0 h-7 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none items-center justify-center gap-1.5 z-10 transition-opacity duration-300 pb-0.5">
           <ChevronsDown className="size-3.5 text-slate-500 animate-bounce" />
           <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Scroll Down</span>
         </div>
